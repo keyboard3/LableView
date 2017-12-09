@@ -16,7 +16,7 @@ public class WordUtil {
         List<String> words = new ArrayList<>();
         //中文、空白字符当做分界符
         source.getChars(0, source.length(), dst, 0);
-        int word_begin = 0, start = 0;
+        int word_begin = 0;
         char preChar = ' ';
         for (int i = 0; i < dst.length; i++) {
             char item = dst[i];
