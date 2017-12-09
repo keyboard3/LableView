@@ -7,28 +7,26 @@ Android Lable 文字分散两端对齐控件
 ## Features
 * 支持末尾添加字符串不影响内容分散对齐
 * 支持中文字符数量限定长度
-* 支持固定 width 兼容英文
+* 支持中英文混排
+* 支持多语言
 
 ## Gradle
 ```
-compile 'com.keyboard3:LableView:1.0'
+compile 'com.keyboard3:LableView:1.1'
 ```
 
 ## Usage
 纯下载自动安装
 ```
  <com.keyboard3.LableView
-    android:layout_width="wrap_content"
+    android:layout_width="170dp"
     android:layout_height="wrap_content"
     android:text="法定代表人"
-    app:charNum="5"
+    app:cmNum="5"
     app:endText=" ：" />
 ```
 ## Screenshot
 <img src="./screenshot/ss1.png" width="400">
-
-## Improve
-* 英文单词处理不完善，会被当成字符解析
 
 ## Thanks
 * [JustifyTextView](https://github.com/EyreGe/JustifyTextView)
