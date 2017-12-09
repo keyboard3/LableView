@@ -26,7 +26,7 @@ compile 'com.keyboard3:LableView:1.1.1'
     app:endText=" ：" />
 ```
 ## Screenshot
-<img src="./screenshot/ss1.png" width="400">
+<img src="./screenshot/ss0.png" width="400">
 
 ## Thanks
 * [JustifyTextView](https://github.com/EyreGe/JustifyTextView)
