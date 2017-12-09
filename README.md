@@ -16,7 +16,6 @@ compile 'com.keyboard3:LableView:1.1.1'
 ```
 
 ## Usage
-纯下载自动安装
 ```
  <com.keyboard3.LableView
     android:layout_width="170dp"
