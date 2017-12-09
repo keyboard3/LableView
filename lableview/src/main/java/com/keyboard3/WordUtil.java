@@ -22,19 +22,17 @@ public class WordUtil {
             char item = dst[i];
             if (isChinese(item)) {
                 if (!isChinese(preChar) && !Character.isSpaceChar(preChar)) {
-                    start = word_begin == 0 ? 0 : word_begin + 1;
                     words.add(source.substring(word_begin, i));
                 }
                 words.add(new String(new char[]{item}));
                 word_begin = i + 1;
             } else if (Character.isSpaceChar(item)) {
                 if ((!Character.isSpaceChar(preChar) && !isChinese(preChar))) {
-                    start = word_begin == 0 ? 0 : word_begin;
                     words.add(source.substring(word_begin, i));
                 }
                 word_begin = i + 1;
             } else if (!Character.isSpaceChar(item) && i == dst.length - 1) {
-                words.add(source.substring(word_begin, i+1));
+                words.add(source.substring(word_begin, i + 1));
             }
             preChar = item;
         }
