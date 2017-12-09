@@ -12,7 +12,7 @@ Android Lable 文字分散两端对齐控件
 
 ## Gradle
 ```
-compile 'com.keyboard3:LableView:1.1'
+compile 'com.keyboard3:LableView:1.1.1'
 ```
 
 ## Usage
@@ -22,7 +22,7 @@ compile 'com.keyboard3:LableView:1.1'
     android:layout_width="170dp"
     android:layout_height="wrap_content"
     android:text="法定代表人"
-    app:cmNum="5"
+    app:cnNum="5"
     app:endText=" ：" />
 ```
 ## Screenshot

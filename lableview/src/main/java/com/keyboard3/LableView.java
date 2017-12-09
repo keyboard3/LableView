@@ -11,9 +11,10 @@ import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import java.util.List;
 
 /**
  * @author keyboard3 on 2017/12/5
@@ -23,10 +24,10 @@ import android.widget.TextView;
 public class LableView extends TextView {
 
     private int mY;
-    private int mContentWidth;
+    private float mContentWidth;
     private String mEndText;
-    private int mCharNum = 0;
-    private int mEndWidth = 0;
+    private int mCNNum = 0;
+    private float mEndWidth = 0;
 
     public LableView(Context context) {
         this(context, null);
@@ -40,26 +41,25 @@ public class LableView extends TextView {
         super(context, attrs, defStyleAttr);
         final TypedArray custom = context.obtainStyledAttributes(
                 attrs, R.styleable.LableView, defStyleAttr, 0);
-        mCharNum = custom.getInt(R.styleable.LableView_charNum, 0);
+        mCNNum = custom.getInt(R.styleable.LableView_cnNum, 0);
         mEndText = custom.getString(R.styleable.LableView_endText);
-        Log.d("gcy", "mEndText:" + mEndText);
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         if (!TextUtils.isEmpty(mEndText)) {
-            mEndWidth = (int) getPaint().measureText(mEndText);
+            mEndWidth = getPaint().measureText(mEndText);
         }
-        if (getLayoutParams().width == ViewGroup.LayoutParams.WRAP_CONTENT) {
-            int width = 0;
-            if (mCharNum != 0) {
-                width = (int) getPaint().measureText("测") * mCharNum;
-            } else {
-                width = (int) getPaint().measureText(getText() + mEndText);
-            }
+        float width = 0;
+        if (mCNNum != 0 && WordUtil.isChinese(getText().toString())) {
+            width = getPaint().measureText("测") * mCNNum;
             width += mEndWidth;
-            setMeasuredDimension(width, getMeasuredHeight());
+            setMeasuredDimension((int) width, getMeasuredHeight());
+        } else if (getLayoutParams().width == ViewGroup.LayoutParams.WRAP_CONTENT) {
+            width = (int) getPaint().measureText(getText() + mEndText);
+            width += mEndWidth;
+            setMeasuredDimension((int) width, getMeasuredHeight());
         }
     }
 
@@ -84,16 +84,7 @@ public class LableView extends TextView {
         int textHeight = (int) (Math.ceil(fm.descent - fm.ascent));
         textHeight = (int) (textHeight * layout.getSpacingMultiplier() + layout
                 .getSpacingAdd());
-        int lineStart = layout.getLineStart(0);
-        int lineEnd = layout.getLineEnd(0);
-        float width = StaticLayout.getDesiredWidth(text, lineStart,
-                lineEnd, getPaint());
-        String line = text.substring(lineStart, lineEnd);
-        if (needScale(line)) {
-            drawScaledText(canvas, lineStart, line, width);
-        } else {
-            canvas.drawText(line, 0, mY, paint);
-        }
+        drawScaledText(canvas, 0, WordUtil.getWords(getText().toString()), mContentWidth);
         mY += textHeight;
         mY -= textHeight;
         if (!TextUtils.isEmpty(mEndText)) {
@@ -101,48 +92,19 @@ public class LableView extends TextView {
         }
     }
 
-    private void drawScaledText(Canvas canvas, int lineStart, String line,
-                                float lineWidth) {
+    private void drawScaledText(Canvas canvas, int start, List<String> words,
+                                float width) {
+        float used = 0, space = 0;
+        float[] wordWidths = new float[words.size()];
+        for (int i = 0; i < words.size(); i++) {
+            wordWidths[i] = StaticLayout.getDesiredWidth(words.get(i), getPaint());
+            used += wordWidths[i];
+        }
+        space = (width - used) / (words.size() - 1);
         float x = 0;
-        if (isFirstLineOfParagraph(lineStart, line)) {
-            String blanks = "  ";
-            canvas.drawText(blanks, x, mY, getPaint());
-            float bw = StaticLayout.getDesiredWidth(blanks, getPaint());
-            x += bw;
-
-            line = line.substring(3);
-        }
-
-        int gapCount = line.length() - 1;
-        int i = 0;
-        if (line.length() > 2 && line.charAt(0) == 12288
-                && line.charAt(1) == 12288) {
-            String substring = line.substring(0, 2);
-            float cw = StaticLayout.getDesiredWidth(substring, getPaint());
-            canvas.drawText(substring, x, mY, getPaint());
-            x += cw;
-            i += 2;
-        }
-
-        float d = (mContentWidth - lineWidth) / gapCount;
-        for (; i < line.length(); i++) {
-            String c = String.valueOf(line.charAt(i));
-            float cw = StaticLayout.getDesiredWidth(c, getPaint());
-            canvas.drawText(c, x, mY, getPaint());
-            x += cw + d;
-        }
-    }
-
-    private boolean isFirstLineOfParagraph(int lineStart, String line) {
-        return line.length() > 3 && line.charAt(0) == ' '
-                && line.charAt(1) == ' ';
-    }
-
-    private boolean needScale(String line) {
-        if (line == null || line.length() == 0) {
-            return false;
-        } else {
-            return line.charAt(line.length() - 1) != '\n';
+        for (int i = 0; i < words.size(); i++) {
+            canvas.drawText(words.get(i), x, mY, getPaint());
+            x += space + wordWidths[i];
         }
     }
 }
