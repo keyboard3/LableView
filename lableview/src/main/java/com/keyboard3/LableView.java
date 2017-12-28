@@ -51,15 +51,18 @@ public class LableView extends TextView {
         if (!TextUtils.isEmpty(mEndText)) {
             mEndWidth = getPaint().measureText(mEndText);
         }
+        int mode = MeasureSpec.getMode(widthMeasureSpec);
+        int size = MeasureSpec.getMode(widthMeasureSpec);
         float width = 0;
         if (mCNNum != 0 && WordUtil.isChinese(getText().toString())) {
             width = getPaint().measureText("测") * mCNNum;
             width += mEndWidth;
             setMeasuredDimension((int) width, getMeasuredHeight());
-        } else if (getLayoutParams().width == ViewGroup.LayoutParams.WRAP_CONTENT) {
+        } else if (mode == MeasureSpec.AT_MOST) {
             width = (int) getPaint().measureText(getText() + mEndText);
             width += mEndWidth;
-            setMeasuredDimension((int) width, getMeasuredHeight());
+            size = (int) Math.max(width, size);
+            setMeasuredDimension(size, getMeasuredHeight());
         }
     }
 
